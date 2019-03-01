@@ -1,0 +1,31 @@
+language: rust
+rust: beta
+sudo: false
+env:
+  - RUST_BACKTRACE=1
+  - GITHUB_TOKEN=TODO # TODO
+addons:
+  firefox: latest
+  chrome: stable
+cache: cargo
+install:
+  - (test -x $HOME/.cargo/bin/cargo-install-update || cargo install cargo-update)
+  - (test -x $HOME/.cargo/bin/cargo-generate || cargo install --vers "^0.2" cargo-generate)
+  - cargo install-update -a
+  - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+script:
+  - wasm-pack build
+  - wasm-pack test --chrome --firefox --headless
+before_deploy:
+  - (cd www && npm i && npm run-script build)
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  on:
+    branch: gh-pages
+  local-dir: www/dist
+  verbose: true
+  deployment-file: true
+
