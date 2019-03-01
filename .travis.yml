@@ -19,9 +19,10 @@ install:
   - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 script:
   - wasm-pack build
+  - (cd pkg && npm link)
   - wasm-pack test --chrome --firefox --headless
 before_deploy:
-  - (cd www && npm i && npm run-script build)
+  - (cd www && npm i && npm link cube-pump  && npm run-script build)
 deploy:
   provider: pages
   skip-cleanup: true
