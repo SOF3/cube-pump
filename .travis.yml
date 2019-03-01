@@ -5,6 +5,10 @@ env:
   global:
     - RUST_BACKTRACE=1
 addons:
+  apt:
+    update: true
+    packages:
+      - nodejs
   firefox: latest
   chrome: stable
 cache: cargo
