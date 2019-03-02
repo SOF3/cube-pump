@@ -17,6 +17,8 @@ install:
   - (test -x $HOME/.cargo/bin/cargo-generate || cargo install --vers "^0.2" cargo-generate)
   - cargo install-update -a
   - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+before_script:
+  - rm www/webpack.config.js && mv www/webpack.config.deploy.js www/webpack.config.js
 script:
   - wasm-pack build
   - (cd pkg && npm link)
