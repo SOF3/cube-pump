@@ -1,13 +1,26 @@
 [ProtocolWrapper]
 CubePump protocol runs via WebSocket.
-Except [HandShake], [LoginAccept], [Ping] and [Disconnect], all other signals are delivered in packages per 50ms, encoded by:
+
+There are two types of signals: LowLevelSignal (LL) and PackedSignal (PK).
+
+[PackedSignal]
+PKs mainly provide non-network-critical data related to the gameplay. They are sent in packages every 50ms.
+
+[LowLevelSignal]
+There are 5 classes of LL. Four of them are described in [HandShake], [LoginAccept], [Ping] and [Disconnect].
+
+The fifth type of LL is the Package Signal, which sends a package of PKs in this format:
 	length uint32
 	deflated byte[length]
-Where deflated is the following data encoded in zlib deflation:
+where deflated is the following data encoded in zlib deflation:
 	size uint32
 	for i from 1 to size
 		signalId[i] uint16
 		signalPayload[i] dynamic
+
+Each LL has a 1-byte ID as presented in ll-id.txt
+
+signalId[i] is the 2-byte ID of the i-th PK as presented in pk-id.txt
 
 [Legend]
 CS = Client -> Server only
@@ -17,6 +30,8 @@ MT = Signal may be sent from both sides
 nop = add some bits to pad the payload to a full byte
 
 [DataTypes]
+; [u]int(8|16|32|64): big-endian encoded
+
 struct string
 	length uint16
 	buffer byte[length]
@@ -60,8 +75,8 @@ struct flex_pos
 	yaw float32
 	pitch float32
 
-[FlowChart]
-digraph FlowChart
+[FSM]
+digraph FSM
 	initial -> login_requested [HandShake]
 	login_requested -> loading [LoginAccept]
 	login_requested -> disconnected [Disconnect]
@@ -86,7 +101,7 @@ CS LOGIN_REQUEST
 
 [LoginAccept]
 SC LOGIN_ACCEPT
-	minorProtocol uint32 ; to let client decide if server supports new features
+	minorProtocol uint32 ; to let client determine if server supports new features
 
 [Disconnect]
 SC DISCONNECT

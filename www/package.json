@@ -7,8 +7,10 @@
     "build": "webpack --config webpack.config.js",
     "start": "webpack-dev-server"
   },
+  "dependencies": {
+    "query-string": "^6.2.0"
+  },
   "devDependencies": {
-    "hello-wasm-pack": "^0.1.0",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.5",

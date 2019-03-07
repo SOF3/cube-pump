@@ -17,20 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as wasm from "cube-pump"
-import * as queryString from "query-string"
+extern crate std;
 
-const query = queryString.parse(window.location.search)
+use net::stream::OutStream;
+use net::Writer;
 
-if(query.address && query.port){
-	const address = query.address
-	const port = parseInt(query.port)
-	wasm.connect_server(address, port)
+pub struct Client<W> {
+	output: OutStream<W>,
 }
 
-window.document.getElementById("ConnectForm").addEventListener("submit", event => {
-	event.preventDefault()
-	const address = window.document.getElementById("ConnectForm-Address")
-	const port = window.document.getElementById("ConnectForm-Port")
-	wasm.connect_server(address.value, parseInt(port.value))
-})
+impl<W> Client<W> where W: Writer {
+	pub fn new(writer: W) -> Client<W> {
+		Client {
+			output: OutStream::new(writer),
+		}
+	}
+}

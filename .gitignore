@@ -2,7 +2,8 @@
 **/*.rs.bk
 Cargo.lock
 bin/
-pkg/
 wasm-pack.log
-.idea
+.idea/*
 .cargo-ok
+!.idea/inspectionProfiles
+!.idea/codeStyles/Project.xml

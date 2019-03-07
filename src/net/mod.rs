@@ -17,20 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as wasm from "cube-pump"
-import * as queryString from "query-string"
+pub mod client;
+pub mod protocol;
+mod stream;
 
-const query = queryString.parse(window.location.search)
-
-if(query.address && query.port){
-	const address = query.address
-	const port = parseInt(query.port)
-	wasm.connect_server(address, port)
+pub trait Writer {
+	fn write(&mut self, buffer: &[u8]);
 }
-
-window.document.getElementById("ConnectForm").addEventListener("submit", event => {
-	event.preventDefault()
-	const address = window.document.getElementById("ConnectForm-Address")
-	const port = window.document.getElementById("ConnectForm-Port")
-	wasm.connect_server(address.value, parseInt(port.value))
-})

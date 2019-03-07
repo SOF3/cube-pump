@@ -17,20 +17,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as wasm from "cube-pump"
-import * as queryString from "query-string"
+extern crate libflate;
 
-const query = queryString.parse(window.location.search)
+use std::io::Write;
+use std::vec::Vec;
 
-if(query.address && query.port){
-	const address = query.address
-	const port = parseInt(query.port)
-	wasm.connect_server(address, port)
+use net::protocol::PackedSignal;
+use net::Writer;
+
+use self::libflate::deflate::Encoder;
+
+pub struct OutStream<W> {
+	writer: W,
+	buffer: Option<Encoder<Vec<u8>>>,
 }
 
-window.document.getElementById("ConnectForm").addEventListener("submit", event => {
-	event.preventDefault()
-	const address = window.document.getElementById("ConnectForm-Address")
-	const port = window.document.getElementById("ConnectForm-Port")
-	wasm.connect_server(address.value, parseInt(port.value))
-})
+impl<W> OutStream<W> where W: Writer {
+	pub fn new(writer: W) -> OutStream<W> {
+		OutStream {
+			writer,
+			buffer: Some(Encoder::new(Vec::new())),
+		}
+	}
+
+	pub fn flush(&mut self) {
+		let vec = self.buffer.take().unwrap().finish().into_result().unwrap();
+		self.writer.write(vec.as_slice());
+		self.buffer.replace(Encoder::new(Vec::new()));
+	}
+
+	pub fn put<S: PackedSignal>(&self, signal: &S) {
+		&signal.write();
+	}
+}

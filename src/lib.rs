@@ -19,10 +19,15 @@
 
 extern crate cfg_if;
 extern crate wasm_bindgen;
+extern crate wasm_bindgen_test;
+extern crate web_sys;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;
 
+use net::Writer;
+
+mod net;
 mod utils;
 
 cfg_if! {
@@ -37,10 +42,20 @@ cfg_if! {
 
 #[wasm_bindgen]
 extern {
-    fn alert(s: &str);
+	fn alert(s: &str);
 }
 
 #[wasm_bindgen]
-pub fn init_cube_pump() {
-    alert("Hello again, cube-pump!");
+pub fn connect_server(address: &str, port: u16) {
+	struct HexConsoleWriter {}
+	impl Writer for HexConsoleWriter {
+		fn write(&mut self, buffer: &[u8]) {
+			println!("{:#x?}", buffer)
+		}
+	}
+
+	let client = net::client::Client::new(HexConsoleWriter {});
+	let canvas = web_sys::window().expect("window not found")
+		.document().expect("window.document not found")
+		.get_element_by_id("MainCanvas");
 }

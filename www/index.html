@@ -1,18 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>CubePump client</title>
-    <meta name="description" content="Connect to CubePump servers with CubePump client! CubePump is a framework for 3D cube-based games."/>
-    <meta charset="UTF-8"/>
-    <meta property="og:site_name" content="CubePump"/>
-    <meta property="og:title" content="CubePump client"/>
-    <meta property="og:type" content="website"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="mobile-web-app-capable" content="yes"/>
+<head>
+	<title>CubePump client</title>
+	<meta name="description"
+	      content="Connect to CubePump servers with CubePump client! CubePump is a framework for 3D cube-based games."/>
+	<meta charset="UTF-8"/>
+	<meta property="og:site_name" content="CubePump"/>
+	<meta property="og:title" content="CubePump client"/>
+	<meta property="og:type" content="website"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="mobile-web-app-capable" content="yes"/>
 
-    <meta name="theme-color" content="#808080"/>
-  </head>
-  <body>
-    <script src="./bootstrap.js"></script>
-  </body>
+	<meta name="theme-color" content="#808080"/>
+
+	<style>
+		body{
+			margin: 0;
+		}
+		#ConnectForm{
+			position:  absolute;
+			top:       50%;
+			left:      50%;
+			transform: translate(-50%, -50%);
+			font-size: large;
+		}
+		#ConnectForm tr > td{
+			padding: 0.5em 1em;
+		}
+		#ConnectForm tr > td:first-child:not([colspan="2"]){
+			text-align: right;
+		}
+		#ConnectForm tr > td[colspan="2"]{
+			text-align: center;
+		}
+
+		#MainCanvas{
+			display: none;
+			width:   100%;
+			height:  100%;
+		}
+	</style>
+</head>
+<body>
+<div id="ConnectFormContainer">
+	<form id="ConnectForm">
+		<table>
+			<tr>
+				<td><label for="ConnectForm-Address">Server address</label></td>
+				<td><input type="text" id="ConnectForm-Address" value="127.0.0.1" autofocus/></td>
+			</tr>
+			<tr>
+				<td><label for="ConnectForm-Port">Port</label></td>
+				<td><input type="number" min="0" max="65535" id="ConnectForm-Port" value="29132"/></td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="submit" value="Connect"/></td>
+			</tr>
+		</table>
+	</form>
+</div>
+<canvas id="MainCanvas"></canvas>
+<script src="./bootstrap.js"></script>
+</body>
 </html>

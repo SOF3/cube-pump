@@ -17,20 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as wasm from "cube-pump"
-import * as queryString from "query-string"
+const cp = require("child_process")
+const path = require("path")
 
-const query = queryString.parse(window.location.search)
-
-if(query.address && query.port){
-	const address = query.address
-	const port = parseInt(query.port)
-	wasm.connect_server(address, port)
+function run(cd, cmd, ...args){
+	return new Promise((resolve, reject)=>{
+		console.info(`Executing command ${cmd} ${args.join(" ")}`)
+		const process = cp.spawn(cmd, args, {
+			cwd: cd,
+			stdio: "inherit",
+		})
+		process.on("close", code=>code > 0 ? reject(code) : resolve())
+	})
 }
 
-window.document.getElementById("ConnectForm").addEventListener("submit", event => {
-	event.preventDefault()
-	const address = window.document.getElementById("ConnectForm-Address")
-	const port = window.document.getElementById("ConnectForm-Port")
-	wasm.connect_server(address.value, parseInt(port.value))
-})
+run(__dirname, "wasm-pack", "build")
+	.then(()=>run(path.join(__dirname, "www"), "npm.cmd", "start"))
+	.catch(err=>{
+		process.exit(err)
+	})
